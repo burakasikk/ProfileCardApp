@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, useWindowDimensions } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADII, FONTS } from '../theme';
@@ -6,6 +6,11 @@ import { COLORS, SPACING, RADII, FONTS } from '../theme';
 export default function ProfileScreen() {
   const [theme, setTheme] = useState('light');
   const currentTheme = COLORS[theme];
+
+  // Ekran genişliğini alıyoruz
+  const { width } = useWindowDimensions();
+  // Genişlik 500'den büyükse "Büyük Ekran" kabul ediyoruz
+  const isLargeScreen = width > 500;
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -21,10 +26,19 @@ export default function ProfileScreen() {
         />
       </Pressable>
 
-      <View style={[styles.card, { backgroundColor: currentTheme.card }]}>
+      <View style={[
+        styles.card,
+        {
+          backgroundColor: currentTheme.card,
+          // Ekran büyükse daha fazla padding ve daha dar genişlik (%60), küçükse tam tersi
+          width: isLargeScreen ? '60%' : '85%',
+          padding: isLargeScreen ? SPACING.xl : SPACING.lg,
+        }
+      ]}>
         <Ionicons
           name="person-circle-outline"
-          size={80}
+          // İkon boyutu büyük ekranda daha büyük (100), küçükte (80)
+          size={isLargeScreen ? 100 : 80}
           color={currentTheme.text}
         />
         <Text style={[styles.name, { color: currentTheme.text }]}>
@@ -62,10 +76,9 @@ const styles = StyleSheet.create({
     padding: SPACING.sm,
   },
   card: {
-    width: '85%',
+    // Sabit width ve padding buradan kaldırıldı, yukarıda dinamik veriliyor
     borderRadius: RADII.md,
     alignItems: 'center',
-    padding: SPACING.lg,
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
