@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, RADII, FONTS } from '../theme';
@@ -7,25 +7,43 @@ export default function ProfileScreen() {
   const [theme, setTheme] = useState('light');
   const currentTheme = COLORS[theme];
 
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.bg }]}>
+      <Pressable onPress={toggleTheme} style={styles.themeToggle}>
+        <Ionicons
+          name={theme === 'light' ? 'moon' : 'sunny'}
+          size={28}
+          color={currentTheme.text}
+        />
+      </Pressable>
+
       <View style={[styles.card, { backgroundColor: currentTheme.card }]}>
-        {/* Profil İkonu */}
         <Ionicons
           name="person-circle-outline"
           size={80}
           color={currentTheme.text}
         />
-        
-        {/* İsim */}
         <Text style={[styles.name, { color: currentTheme.text }]}>
-          Burak Tuğrul Aşık
+          Ahmet Yılmaz
         </Text>
-        
-        {/* Rol */}
         <Text style={[styles.role, { color: currentTheme.text }]}>
           Mobil Geliştirici
         </Text>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.likeButton,
+            { backgroundColor: pressed ? '#e63946' : '#ff6b6b' }
+          ]}
+          onPress={() => console.log('Profil Beğenildi!')}
+        >
+          <Ionicons name="heart" size={24} color="#fff" />
+          <Text style={styles.likeText}>Beğen</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -37,17 +55,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  themeToggle: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    padding: SPACING.sm,
+  },
   card: {
     width: '85%',
     borderRadius: RADII.md,
     alignItems: 'center',
     padding: SPACING.lg,
-    // iOS için gölge ayarları
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
-    // Android için gölge ayarı
     elevation: 6,
   },
   name: {
@@ -60,5 +82,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: SPACING.sm,
     opacity: 0.7,
+  },
+  likeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+    borderRadius: 50,
+    marginTop: SPACING.md,
+  },
+  likeText: {
+    color: '#fff',
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+    marginLeft: SPACING.sm,
   },
 });
